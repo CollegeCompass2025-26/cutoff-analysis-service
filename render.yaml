@@ -5,7 +5,6 @@ services:
     plan: free # Optimized for zero-cost deployment
     envVars:
       - key: DATABASE_URL
-        sync: false # Render will ask you for this value during setup
       - key: PORT
         value: 8000
       - key: PYTHONPATH
