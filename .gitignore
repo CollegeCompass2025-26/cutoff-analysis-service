@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv
+venv/
+ENV/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Project Specific Data (Excluded)
+data/
+*.npy
+*.png
+*.jpg
+*.webp
+*.pdf
+research/*.png
+
+# Models (INCLUDED for deployment)
+# models/**/*.joblib
+# models/**/*.h5
+# models/**/*.keras
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Render/Deployment
+render.yaml # Optional: if you want to keep secrets elsewhere, but usually okay to commit
+Dockerfile
+.dockerignore
