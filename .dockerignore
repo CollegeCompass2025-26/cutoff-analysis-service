@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+data/raw/
+data/processed/
+.git/
+.gitignore
+tests/
+research/
+*.png
+*.jpg
+*.npy
+*.webp

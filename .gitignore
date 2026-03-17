@@ -48,8 +48,3 @@ research/*.png
 .idea/
 *.swp
 *.swo
-
-# Render/Deployment
-render.yaml # Optional: if you want to keep secrets elsewhere, but usually okay to commit
-Dockerfile
-.dockerignore
