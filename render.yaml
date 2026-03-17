@@ -5,9 +5,7 @@ services:
     plan: free # Optimized for zero-cost deployment
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: college_compass_db
-          property: connectionString
+        sync: false # Render will ask you for this value during setup
       - key: PORT
         value: 8000
       - key: PYTHONPATH
