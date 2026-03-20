@@ -39,7 +39,7 @@ def train_lstm():
     )
     
     os.makedirs('models/lstm', exist_ok=True)
-    model.save('models/lstm/cutoff_lstm_v1.keras')
+    model.save('models/lstm/cutoff_lstm_v1.h5')
     
     # Plot loss
     plt.figure(figsize=(10, 5))

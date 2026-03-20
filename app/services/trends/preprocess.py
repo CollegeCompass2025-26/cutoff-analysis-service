@@ -14,13 +14,10 @@ class DataPreprocessor:
         self.db_url = os.getenv("DATABASE_URL")
         self.encoders = {}
 
-    def fetch_data(self, exam_name=None):
-        print(f"Fetching data from database...")
+    def fetch_data(self):
+        print(f"Fetching data from ml_features_v2...")
         conn = psycopg2.connect(self.db_url)
-        query = "SELECT * FROM raw_cutoffs"
-        if exam_name:
-            query += f" WHERE exam_name = '{exam_name}'"
-        
+        query = "SELECT * FROM ml_features_v2"
         df = pd.read_sql(query, conn)
         conn.close()
         print(f"Fetched {len(df)} records.")
@@ -29,42 +26,45 @@ class DataPreprocessor:
     def prepare_features(self, df):
         print("Starting feature engineering...")
         
-        # 1. Handle missing values
+        # 1. Handle missing values for target
         df = df.copy()
-        df['opening_rank'] = df['opening_rank'].fillna(df['closing_rank'])
-        df['percentile'] = df['percentile'].fillna(0)
+        df['cutoff_value'] = pd.to_numeric(df['cutoff_value'], errors='coerce')
+        df = df.dropna(subset=['cutoff_value'])
+        df = df[df['cutoff_value'] > 0]
+        
+        # Add new numeric features
+        numeric_features = [
+            'established_year', 'rating_hostel', 'rating_academic', 'rating_faculty', 
+            'rating_infra', 'rating_placement', 'highest_package', 'avg_package', 
+            'fees', 'duration_years'
+        ]
+        
+        for col in numeric_features:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
         
         # 2. Categorical Encoding
-        categorical_cols = ['exam_name', 'round', 'college_name', 'course_name', 'category', 'quota', 'gender', 'institute_type']
+        categorical_cols = [
+            'category', 'cutoff_type', 'college_name', 'state', 'city', 
+            'typeofuni', 'course_name', 'specialization_name', 'exam_name'
+        ]
         
         for col in categorical_cols:
             le = LabelEncoder()
-            # Fill NAs with 'Unknown' before encoding
             df[col] = df[col].fillna('Unknown').astype(str)
             df[col] = le.fit_transform(df[col])
             self.encoders[col] = le
             
-        # 3. Target Variable
-        # Ensure closing_rank is numeric and handle outliers
-        df['closing_rank'] = pd.to_numeric(df['closing_rank'], errors='coerce')
-        df = df[df['closing_rank'] > 0] # Rank must be positive
+        # 3. Target Variable (Log Scale)
+        df['log_cutoff_value'] = np.log1p(df['cutoff_value'])
+        df = df[~np.isinf(df['log_cutoff_value'])]
         
-        # 4. Filter out any remaining NaNs in features
-        df = df.dropna(subset=['closing_rank'] + categorical_cols)
-        
-        # We might want to use log transform for ranks as they can vary wildly
-        df['log_closing_rank'] = np.log1p(df['closing_rank'])
-        
-        # Drop infs if any
-        df = df[~np.isinf(df['log_closing_rank'])]
-        
-        # 5. Save Encoders
+        # 4. Save Encoders
         os.makedirs('models/encoders', exist_ok=True)
         joblib.dump(self.encoders, 'models/encoders/label_encoders.joblib')
         
-        features = categorical_cols + ['year']
+        features = categorical_cols + numeric_features + ['year']
         X = df[features]
-        y = df['log_closing_rank']
+        y = df['log_cutoff_value']
         
         return X, y, features
 

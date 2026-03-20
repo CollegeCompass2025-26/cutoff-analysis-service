@@ -39,9 +39,10 @@ class PredictionRequest(BaseModel):
     user_location: Optional[str] = None # e.g., 'Mumbai, Maharashtra'
     history: Optional[List[int]] = None # Previous years ranks
 
-class RoundDrift(BaseModel):
+class RoundPrediction(BaseModel):
     round_name: str
-    delta: int # Rank inflation/deflation relative to Round 1
+    predicted_cutoff: int
+    status: str
 
 class Competitor(BaseModel):
     college_name: str
@@ -64,22 +65,25 @@ class PredictionResponse(BaseModel):
     
     # 5. Volatility Index
     volatility_score: float
+    stability_score: float
     
-    # 6. Round-wise Drift
-    round_drift: List[RoundDrift]
+    # 6. Round-wise Analysis
+    round_predictions: List[RoundPrediction]
+    earliest_round: str
+    final_verdict: str
     
     # 7. Multi-College Benchmarking
     competitors: List[Competitor]
     
     # 8. Temporal Strategy
     recommended_round: str
-    strategy_insights: List[str] # Multiple strategic recommendations
+    strategy_insights: List[str]
     
-    # 9. AI Insights (SHAP based)
+    # 9. AI Insights
     insights: List[str]
     
-    # 10. Regional Heatmap (Geo-Spatial)
-    region_competition_index: float # 0-100 scale for that state/city
+    # 10. Regional Heatmap
+    region_competition_index: float
     user_location_context: Optional[str] = None
     coordinates: Optional[Dict[str, float]] = None
 

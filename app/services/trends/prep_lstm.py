@@ -3,59 +3,82 @@ import numpy as np
 import psycopg2
 import os
 from dotenv import load_dotenv
-import joblib
 
-load_dotenv()
+load_dotenv("c:/cutoff-analysis-service/.env")
 
 def prepare_lstm_sequences():
-    print("Fetching raw data for sequence grouping...")
+    print("Fetching sequential round data from ml_features_v3...")
     conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-    # We need (College, Course, Category) groups that have multiple years of data
+    
+    # We pull the data ordered exactly by year and round to form a natural time series
     query = """
-    SELECT college_name, course_name, category, year, closing_rank 
-    FROM raw_cutoffs 
+    SELECT 
+        college_name, course_name, specialization, exam_name, category, quota, gender,
+        year, round, closing_rank 
+    FROM ml_features_v3 
     WHERE closing_rank > 0
-    ORDER BY college_name, course_name, category, year
     """
     df = pd.read_sql(query, conn)
     conn.close()
     
-    print(f"Processing {len(df)} records into sequences...")
+    # 1. Normalize Round Names
+    # Round columns contain things like 'Round 1', '1', 'I', 'II', '6'. We must map them to integers.
+    def parse_round(r):
+        r = str(r).upper().replace('ROUND', '').strip()
+        if r in ['1', 'I']: return 1
+        if r in ['2', 'II']: return 2
+        if r in ['3', 'III']: return 3
+        if r in ['4', 'IV']: return 4
+        if r in ['5', 'V']: return 5
+        if r in ['6', 'VI']: return 6
+        return 1 # Default
+        
+    df['round_num'] = df['round'].apply(parse_round)
     
-    # 1. Pivot to get years as columns
-    pivot_df = df.pivot_table(
-        index=['college_name', 'course_name', 'category'],
-        columns='year',
-        values='closing_rank'
-    ).reset_index()
+    # Sort temporally
+    df = df.fillna('N/A')
+    group_cols = ['college_name', 'course_name', 'specialization', 'exam_name', 'category', 'quota', 'gender']
+    df = df.sort_values(by=group_cols + ['year', 'round_num'])
+    print(f"Processed {len(df)} records into {df['round_num'].nunique()} distinct round phases.")
     
-    # We want sequences of 2021, 2022, 2023 to predict 2024
-    # Fill missing years with median or nearest neighbor if needed, but for now 
-    # let's only take rows that have most of the data.
+    # 2. Build Sequences
+    # We want a sequence of the last N historical rounds across any years to predict the next round.
+    # Group by the exact seat pool
+    sequences = []
+    targets = []
     
-    # Drop rows where 2024 is missing (our target)
-    seq_df = pivot_df.dropna(subset=[2024])
+    # We define a fixed lookback window. Say, look at the last 4 cutoff events to predict the 5th.
+    LOOKBACK = 4
     
-    # Filling missing historical years with the 2024 value as a baseline
-    seq_df[2021] = seq_df[2021].fillna(seq_df[2024])
-    seq_df[2022] = seq_df[2022].fillna(seq_df[2024])
-    seq_df[2023] = seq_df[2023].fillna(seq_df[2024])
+    grouped = df.groupby(group_cols)
     
-    X = seq_df[[2021, 2022, 2023]].values
-    y = seq_df[2024].values
+    for _, group in grouped:
+        ranks = group['closing_rank'].values
+        # Only use groups that have enough history
+        if len(ranks) > LOOKBACK:
+            for i in range(len(ranks) - LOOKBACK):
+                seq = ranks[i : i + LOOKBACK]
+                target = ranks[i + LOOKBACK]
+                
+                sequences.append(seq)
+                targets.append(target)
+                
+    X = np.array(sequences)
+    y = np.array(targets)
+    
+    print(f"Total temporal cross-round sequences generated: {len(X)}")
     
     # Reshape for LSTM: [samples, time_steps, features]
     X_seq = X.reshape((X.shape[0], X.shape[1], 1))
     
-    # Log transform
+    # Log transform for stability
     X_seq = np.log1p(X_seq)
     y_log = np.log1p(y)
-    
-    print(f"Total sequences created: {len(X_seq)}")
     
     os.makedirs('data/ml_ready', exist_ok=True)
     np.save('data/ml_ready/X_lstm.npy', X_seq)
     np.save('data/ml_ready/y_lstm.npy', y_log)
+    print("LSTM tensor generation completed successfully.")
     
     return X_seq, y_log
 

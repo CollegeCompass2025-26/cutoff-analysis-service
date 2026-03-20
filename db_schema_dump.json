@@ -1,0 +1,690 @@
+{
+  "tables": [
+    "streams",
+    "courses",
+    "exams",
+    "specializations",
+    "colleges",
+    "college_specializations",
+    "college_exams",
+    "college_courses",
+    "college_ratings",
+    "placements",
+    "cutoffs",
+    "user_profiles",
+    "advisor_chats",
+    "advisor_messages",
+    "raw_cutoffs",
+    "colleges_metadata"
+  ],
+  "details": {
+    "streams": {
+      "row_count": 21,
+      "columns": [
+        {
+          "name": "stream_id",
+          "type": "integer"
+        },
+        {
+          "name": "stream_name",
+          "type": "text"
+        }
+      ]
+    },
+    "courses": {
+      "row_count": 44,
+      "columns": [
+        {
+          "name": "stream_id",
+          "type": "integer"
+        },
+        {
+          "name": "duration_years",
+          "type": "integer"
+        },
+        {
+          "name": "course_id",
+          "type": "integer"
+        },
+        {
+          "name": "base_eligibility",
+          "type": "text"
+        },
+        {
+          "name": "course_type_name",
+          "type": "text"
+        },
+        {
+          "name": "course_name",
+          "type": "text"
+        },
+        {
+          "name": "level",
+          "type": "text"
+        }
+      ]
+    },
+    "exams": {
+      "row_count": 26,
+      "columns": [
+        {
+          "name": "exam_id",
+          "type": "integer"
+        },
+        {
+          "name": "stream_id",
+          "type": "integer"
+        },
+        {
+          "name": "name",
+          "type": "text"
+        },
+        {
+          "name": "exam_scope",
+          "type": "text"
+        },
+        {
+          "name": "applicable_level",
+          "type": "text"
+        },
+        {
+          "name": "state",
+          "type": "text"
+        }
+      ]
+    },
+    "specializations": {
+      "row_count": 78,
+      "columns": [
+        {
+          "name": "specialization_id",
+          "type": "integer"
+        },
+        {
+          "name": "course_id",
+          "type": "integer"
+        },
+        {
+          "name": "specialization_name",
+          "type": "text"
+        }
+      ]
+    },
+    "colleges": {
+      "row_count": 9075,
+      "columns": [
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "established_year",
+          "type": "integer"
+        },
+        {
+          "name": "rating",
+          "type": "numeric"
+        },
+        {
+          "name": "logo_url",
+          "type": "text"
+        },
+        {
+          "name": "city",
+          "type": "text"
+        },
+        {
+          "name": "state",
+          "type": "text"
+        },
+        {
+          "name": "approvals",
+          "type": "text"
+        },
+        {
+          "name": "college_name",
+          "type": "text"
+        },
+        {
+          "name": "typeofuni",
+          "type": "text"
+        }
+      ]
+    },
+    "college_specializations": {
+      "row_count": 125342,
+      "columns": [
+        {
+          "name": "duration_years",
+          "type": "integer"
+        },
+        {
+          "name": "rating",
+          "type": "numeric"
+        },
+        {
+          "name": "college_specialization_id",
+          "type": "integer"
+        },
+        {
+          "name": "specialization_id",
+          "type": "integer"
+        },
+        {
+          "name": "fees",
+          "type": "integer"
+        },
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "course_id",
+          "type": "integer"
+        },
+        {
+          "name": "time_type",
+          "type": "text"
+        },
+        {
+          "name": "eligibility",
+          "type": "text"
+        },
+        {
+          "name": "application_date",
+          "type": "text"
+        }
+      ]
+    },
+    "college_exams": {
+      "row_count": 21293,
+      "columns": [
+        {
+          "name": "college_exam_id",
+          "type": "integer"
+        },
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "exam_id",
+          "type": "integer"
+        }
+      ]
+    },
+    "college_courses": {
+      "row_count": 47725,
+      "columns": [
+        {
+          "name": "college_course_id",
+          "type": "integer"
+        },
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "course_id",
+          "type": "integer"
+        },
+        {
+          "name": "total_fees",
+          "type": "integer"
+        },
+        {
+          "name": "duration",
+          "type": "integer"
+        },
+        {
+          "name": "rating",
+          "type": "numeric"
+        },
+        {
+          "name": "application_date",
+          "type": "text"
+        },
+        {
+          "name": "course_type",
+          "type": "text"
+        },
+        {
+          "name": "time_type",
+          "type": "text"
+        },
+        {
+          "name": "base_eligibility",
+          "type": "text"
+        }
+      ]
+    },
+    "college_ratings": {
+      "row_count": 9075,
+      "columns": [
+        {
+          "name": "rating_id",
+          "type": "integer"
+        },
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "year",
+          "type": "integer"
+        },
+        {
+          "name": "hostel",
+          "type": "numeric"
+        },
+        {
+          "name": "academic",
+          "type": "numeric"
+        },
+        {
+          "name": "faculty",
+          "type": "numeric"
+        },
+        {
+          "name": "infra",
+          "type": "numeric"
+        },
+        {
+          "name": "placement",
+          "type": "numeric"
+        }
+      ]
+    },
+    "placements": {
+      "row_count": 9075,
+      "columns": [
+        {
+          "name": "placement_id",
+          "type": "integer"
+        },
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "year",
+          "type": "integer"
+        },
+        {
+          "name": "highest_package",
+          "type": "numeric"
+        },
+        {
+          "name": "lowest_package",
+          "type": "numeric"
+        },
+        {
+          "name": "avg_package",
+          "type": "numeric"
+        }
+      ]
+    },
+    "cutoffs": {
+      "row_count": 444300,
+      "columns": [
+        {
+          "name": "cutoff_value",
+          "type": "numeric"
+        },
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "course_id",
+          "type": "integer"
+        },
+        {
+          "name": "specialization_id",
+          "type": "integer"
+        },
+        {
+          "name": "exam_id",
+          "type": "integer"
+        },
+        {
+          "name": "year",
+          "type": "integer"
+        },
+        {
+          "name": "cutoff_id",
+          "type": "integer"
+        },
+        {
+          "name": "category",
+          "type": "text"
+        },
+        {
+          "name": "cutoff_type",
+          "type": "text"
+        }
+      ]
+    },
+    "user_profiles": {
+      "row_count": 3,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "auth_user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "phone_verified",
+          "type": "boolean"
+        },
+        {
+          "name": "email_verified",
+          "type": "boolean"
+        },
+        {
+          "name": "exams_appeared",
+          "type": "jsonb"
+        },
+        {
+          "name": "onboarding_completed",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "first_name",
+          "type": "text"
+        },
+        {
+          "name": "middle_name",
+          "type": "text"
+        },
+        {
+          "name": "last_name",
+          "type": "text"
+        },
+        {
+          "name": "phone",
+          "type": "text"
+        },
+        {
+          "name": "education_qualification",
+          "type": "text"
+        },
+        {
+          "name": "email",
+          "type": "text"
+        }
+      ]
+    },
+    "advisor_chats": {
+      "row_count": 6,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "auth_user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "title",
+          "type": "text"
+        }
+      ]
+    },
+    "advisor_messages": {
+      "row_count": 16,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "chat_id",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "role",
+          "type": "text"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        }
+      ]
+    },
+    "raw_cutoffs": {
+      "row_count": 137846,
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer"
+        },
+        {
+          "name": "year",
+          "type": "integer"
+        },
+        {
+          "name": "opening_rank",
+          "type": "integer"
+        },
+        {
+          "name": "closing_rank",
+          "type": "integer"
+        },
+        {
+          "name": "percentile",
+          "type": "double precision"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp without time zone"
+        },
+        {
+          "name": "course_name",
+          "type": "text"
+        },
+        {
+          "name": "specialization",
+          "type": "character varying"
+        },
+        {
+          "name": "category",
+          "type": "character varying"
+        },
+        {
+          "name": "quota",
+          "type": "character varying"
+        },
+        {
+          "name": "exam_name",
+          "type": "character varying"
+        },
+        {
+          "name": "gender",
+          "type": "character varying"
+        },
+        {
+          "name": "round",
+          "type": "character varying"
+        },
+        {
+          "name": "institute_type",
+          "type": "character varying"
+        },
+        {
+          "name": "college_name",
+          "type": "text"
+        }
+      ]
+    },
+    "colleges_metadata": {
+      "row_count": 0,
+      "columns": [
+        {
+          "name": "college_id",
+          "type": "integer"
+        },
+        {
+          "name": "nirf_ranking",
+          "type": "integer"
+        },
+        {
+          "name": "avg_placement_package",
+          "type": "double precision"
+        },
+        {
+          "name": "total_seats",
+          "type": "integer"
+        },
+        {
+          "name": "fees_per_year",
+          "type": "integer"
+        },
+        {
+          "name": "college_name",
+          "type": "text"
+        },
+        {
+          "name": "institute_type",
+          "type": "character varying"
+        },
+        {
+          "name": "state",
+          "type": "character varying"
+        },
+        {
+          "name": "city",
+          "type": "character varying"
+        }
+      ]
+    }
+  },
+  "foreign_keys": [
+    {
+      "table": "courses",
+      "column": "stream_id",
+      "foreign_table": "streams",
+      "foreign_column": "stream_id"
+    },
+    {
+      "table": "exams",
+      "column": "stream_id",
+      "foreign_table": "streams",
+      "foreign_column": "stream_id"
+    },
+    {
+      "table": "specializations",
+      "column": "course_id",
+      "foreign_table": "courses",
+      "foreign_column": "course_id"
+    },
+    {
+      "table": "college_courses",
+      "column": "college_id",
+      "foreign_table": "colleges",
+      "foreign_column": "college_id"
+    },
+    {
+      "table": "college_courses",
+      "column": "course_id",
+      "foreign_table": "courses",
+      "foreign_column": "course_id"
+    },
+    {
+      "table": "college_exams",
+      "column": "college_id",
+      "foreign_table": "colleges",
+      "foreign_column": "college_id"
+    },
+    {
+      "table": "college_exams",
+      "column": "exam_id",
+      "foreign_table": "exams",
+      "foreign_column": "exam_id"
+    },
+    {
+      "table": "college_specializations",
+      "column": "college_id",
+      "foreign_table": "colleges",
+      "foreign_column": "college_id"
+    },
+    {
+      "table": "college_specializations",
+      "column": "course_id",
+      "foreign_table": "courses",
+      "foreign_column": "course_id"
+    },
+    {
+      "table": "college_specializations",
+      "column": "specialization_id",
+      "foreign_table": "specializations",
+      "foreign_column": "specialization_id"
+    },
+    {
+      "table": "college_ratings",
+      "column": "college_id",
+      "foreign_table": "colleges",
+      "foreign_column": "college_id"
+    },
+    {
+      "table": "placements",
+      "column": "college_id",
+      "foreign_table": "colleges",
+      "foreign_column": "college_id"
+    },
+    {
+      "table": "cutoffs",
+      "column": "college_id",
+      "foreign_table": "colleges",
+      "foreign_column": "college_id"
+    },
+    {
+      "table": "cutoffs",
+      "column": "course_id",
+      "foreign_table": "courses",
+      "foreign_column": "course_id"
+    },
+    {
+      "table": "cutoffs",
+      "column": "specialization_id",
+      "foreign_table": "specializations",
+      "foreign_column": "specialization_id"
+    },
+    {
+      "table": "cutoffs",
+      "column": "exam_id",
+      "foreign_table": "exams",
+      "foreign_column": "exam_id"
+    },
+    {
+      "table": "advisor_messages",
+      "column": "chat_id",
+      "foreign_table": "advisor_chats",
+      "foreign_column": "id"
+    }
+  ]
+}
