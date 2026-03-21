@@ -61,12 +61,13 @@ class CutoffEnsemble:
         # 9 (Cat) + 10 (Num) + 1 (Year) = 20
         input_vector = input_vector[:20]
         
-        # 2. Static Prediction (XGBoost)
+        # 2. Static Predictions (XGBoost & Random Forest)
         try:
             xgb_pred = self.xgb.predict([input_vector])[0]
+            rf_pred = self.rf.predict([input_vector])[0]
         except Exception as e:
-            # Silence internal debug unless critical
             xgb_pred = 7.0 # Fallback log rank
+            rf_pred = 7.0
         
         # 3. Temporal Prediction (LSTM)
         if history_seq is not None and len(history_seq) >= 4:
@@ -74,20 +75,32 @@ class CutoffEnsemble:
             seq_data = history_seq[-4:]
             seq = np.log1p(np.array(seq_data).reshape(1, 4, 1))
             lstm_pred = self.lstm.predict(seq, verbose=0)[0][0]
-            # Fusion: Weight temporal models higher if history exists
-            final_log_rank = 0.7 * lstm_pred + 0.3 * xgb_pred
+            
+            # 4. Hybrid Fusion (All 3 Models)
+            # Weights: 50% XGBoost, 20% Random Forest, 30% LSTM
+            final_log_rank = 0.5 * xgb_pred + 0.2 * rf_pred + 0.3 * lstm_pred
         else:
-            final_log_rank = xgb_pred
+            # Fallback to Tree-based average if no history
+            final_log_rank = 0.7 * xgb_pred + 0.3 * rf_pred
             
         final_rank = np.expm1(final_log_rank)
         return int(final_rank)
 
     def get_risk_assessment(self, final_rank, user_rank):
-        """Feature 9: Seat Risk Assessment"""
+        """
+        Feature 9: Seat Risk Assessment using a 10% Relative Confidence Interval.
+        A fixed-rank delta (e.g. 500) fails at extreme ends (Rank 50 vs Rank 50,000).
+        A 10% relative delta provides a consistent strategic "cushion" across all categories.
+        """
+        threshold = 0.10 * final_rank
         delta = user_rank - final_rank
-        if delta < -500: return "SAFE"
-        if delta < 500: return "MODERATE"
-        return "RISKY"
+        
+        if delta < -threshold:
+            return "SAFE"
+        elif delta < threshold:
+            return "MODERATE"
+        else:
+            return "RISKY"
 
 if __name__ == "__main__":
     # Quick Test
